@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Scam Awareness Quiz</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    #timer { font-weight: bold; }
+    .answer-option.selected {
+      background-color: #3b82f6; /* Tailwind blue-500 */
+      color: white;
+    }
+    .correct {
+      background-color: #d1fae5; /* Tailwind green-100 */
+      color: #065f46; /* Tailwind green-800 */
+      font-weight: bold;
+      padding: 5px;
+      border-radius: 4px;
+    }
+    .incorrect {
+      background-color: #fee2e2; /* Tailwind red-100 */
+      color: #991b1b; /* Tailwind red-800 */
+      text-decoration: line-through;
+      padding: 5px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-gray-900 to-gray-700 text-white min-h-screen flex items-center justify-center">
+
+  <!-- Start Container -->
+  <div id="startContainer" class="w-full max-w-md bg-white text-gray-800 rounded-xl shadow-xl p-8 relative">
+    <button onclick="openAdminModal()" class="absolute top-4 right-4 text-xl hover:rotate-90 transition-transform">⚙️</button>
+    <h1 class="text-2xl font-bold text-center text-red-600 mb-4">Scam Awareness Quiz</h1>
+    <p class="text-sm text-center mb-6">🧠 Select your language and difficulty to begin.</p>
+    <div id="userOptions" class="space-y-4">
+      <div>
+  <label class="block text-sm font-semibold mb-1">Enter Your Name:</label>
+  <input type="text" id="userNameInput" class="w-full p-2 rounded border" placeholder="Your name..." />
+</div>
+
+      <div>
+        <label class="block text-sm font-semibold mb-1">Select Language:</label>
+        <select id="languageSelect" class="w-full p-2 rounded border">
+          <option value="en">English</option>
+          <option value="hi">Hindi</option>
+          <option value="kn">Kannada</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm font-semibold mb-1">Select Difficulty:</label>
+        <select id="difficultySelect" class="w-full p-2 rounded border">
+          <option value="easy">Easy</option>
+          <option value="medium">Medium</option>
+          <option value="hard">Hard</option>
+        </select>
+      </div>
+    </div>
+    <button onclick="startQuiz()" class="mt-6 w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition">Start Quiz</button>
+
+    <!-- Back Button below Start Quiz -->
+    <button onclick="goBack()" class="mt-3 w-full bg-gray-400 text-gray-900 py-2 rounded hover:bg-gray-500 transition">Back</button>
+  </div>
+
+  <!-- Quiz Container -->
+  <div id="quizContainer" class="hidden w-full max-w-3xl bg-white text-gray-800 rounded-xl shadow-xl p-6 relative">
+    <div class="flex justify-between items-center mb-4">
+      <h2 id="quizTitle" class="text-xl font-bold text-red-600"></h2>
+      <div>Time Left: <span id="timer">00:00</span></div>
+    </div>
+    <div id="questionContainer" class="mb-4"></div>
+    <div class="flex justify-between">
+      <button id="prevBtn" onclick="prevQuestion()" class="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400" disabled>Previous</button>
+      <button id="nextBtn" onclick="nextQuestion()" class="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400">Next</button>
+      <button onclick="submitQuiz()" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Submit</button>
+    </div>
+  </div>
+
+  <!-- Result Popup -->
+  <div id="resultPopup" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-lg shadow-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto p-6 relative text-gray-800">
+      <button onclick="closeResults()" class="absolute top-3 right-3 text-2xl font-bold text-gray-500 hover:text-red-600">&times;</button>
+      <h2 class="text-2xl font-bold mb-4 text-red-600">Quiz Results</h2>
+      <div id="resultSummary" class="mb-4 text-lg font-semibold"></div>
+      <div id="detailedResults" class="space-y-3"></div>
+    </div>
+  </div>
+
+  <!-- Admin Settings Modal -->
+  <div id="adminModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white text-gray-800 p-6 rounded-lg w-full max-w-md shadow-lg relative">
+      <h2 class="text-lg font-bold mb-2">🔐 Admin Settings</h2>
+      <input type="password" id="adminCode" placeholder="Enter Admin Code" class="mb-3 w-full p-2 border rounded" />
+      <button onclick="unlockAdmin()" class="mb-4 bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700">Unlock</button>
+      <div id="adminControls" class="hidden">
+        <div class="mb-4">
+          <label class="block text-sm font-semibold mb-1">Set Custom Time (seconds):</label>
+          <input type="number" id="customTime" class="w-full p-2 border rounded" placeholder="e.g., 90" />
+        </div>
+        <div class="mb-4">
+          <label class="block text-sm font-semibold mb-1">Force Difficulty:</label>
+          <select id="adminDifficulty" class="w-full p-2 border rounded">
+            <option value="easy">Easy</option>
+            <option value="medium">Medium</option>
+            <option value="hard">Hard</option>
+          </select>
+        </div>
+        <div class="mb-4">
+          <label class="flex items-center space-x-2">
+            <input type="checkbox" id="disableUserSelection" />
+            <span class="text-sm">Disable User Difficulty Selection</span>
+          </label>
+        </div>
+        <button onclick="applyAdminSettings()" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Apply Settings</button>
+      </div>
+      <button onclick="closeAdminModal()" class="absolute top-2 right-3 text-lg font-bold text-gray-500 hover:text-red-600">&times;</button>
+    </div>
+  </div>
+
+<script>
+  
+
+let  language = 'en';
+let difficulty = 'easy';
+let userName = "";
+
+let adminUnlocked = false;
+let adminTimeOverride = null;
+let adminForceDifficulty = "easy";
+let disableUserOptions = false;
+function loadAdminSettingsFromStorage() {
+  const saved = JSON.parse(localStorage.getItem("quizAdminSettings"));
+  if (!saved) return;
+
+  if (saved.timeInSeconds) {
+    adminTimeOverride = saved.timeInSeconds;
+  }
+  if (saved.difficulty) {
+    adminForceDifficulty = saved.difficulty;
+  }
+  disableUserOptions = saved.disableUserSelect || false;
+
+  const diffSelect = document.getElementById("difficultySelect");
+  if (disableUserOptions && diffSelect) {
+    diffSelect.value = adminForceDifficulty;
+    diffSelect.disabled = true;
+  }
+}
+
+
+
+  let questionsDB = {
+    easy: [
+  {
+    question: {
+      en: "What is phishing?",
+      hi: "फिशिंग क्या है?",
+      kn: "ಫಿಷಿಂಗ್ ಎಂದರೆ ಏನು?"
+    },
+    options: {
+      en: [
+        "A cyber attack to steal personal info",
+        "A fishing sport",
+        "A new social media trend",
+        "An email spam"
+      ],
+      hi: [
+        "व्यक्तिगत जानकारी चुराने वाला साइबर हमला",
+        "मछली पकड़ने का खेल",
+        "एक नया सोशल मीडिया ट्रेंड",
+        "एक ईमेल स्पैम"
+      ],
+      kn: [
+        "ವೈಯಕ್ತಿಕ ಮಾಹಿತಿಯನ್ನು ಕಳವುಮಾಡುವ ಸೈಬರ್ ದಾಳಿ",
+        "ಮೀನುಗಾರಿಕೆ ಕ್ರೀಡೆ",
+        "ಹೊಸ ಸೋಶಿಯಲ್ ಮೀಡಿಯಾ ಟ್ರೆಂಡ್",
+        "ಇಮೇಲ್ ಸ್ಪ್ಯಾಮ್"
+      ]
+    },
+    correct: 0
+  },
+  {
+    question: {
+      en: "Which is a safe practice online?",
+      hi: "ऑनलाइन सुरक्षित अभ्यास कौन सा है?",
+      kn: "ಆನ್ಲೈನ್‌ನಲ್ಲಿ ಸುರಕ್ಷಿತ ಅಭ್ಯಾಸ ಯಾವುದು?"
+    },
+    options: {
+      en: [
+        "Sharing passwords openly",
+        "Using strong unique passwords",
+        "Clicking unknown links",
+        "Ignoring software updates"
+      ],
+      hi: [
+        "पासवर्ड खुलेआम साझा करना",
+        "मजबूत और अद्वितीय पासवर्ड का उपयोग",
+        "अज्ञात लिंक पर क्लिक करना",
+        "सॉफ़्टवेयर अपडेट को नजरअंदाज करना"
+      ],
+      kn: [
+        "ಪಾಸ್ವರ್ಡ್‌ಗಳನ್ನು ತೆರೆಯಾಗಿ ಹಂಚಿಕೊಳ್ಳುವುದು",
+        "ಬಲವಾದ ವಿಶಿಷ್ಟ ಪಾಸ್ವರ್ಡ್‌ಗಳನ್ನು ಬಳಸುವುದು",
+        "ಅಪರಿಚಿತ ಲಿಂಕ್‌ಗಳನ್ನು ಕ್ಲಿಕ್ ಮಾಡುವುದು",
+        "ಸಾಫ್ಟ್‌ವೇರ್ ನವೀಕರಣಗಳನ್ನು ನಿರ್ಲಕ್ಷಿಸುವುದು"
+      ]
+    },
+    correct: 1
+  },
+  {
+    question: {
+      en: "What does HTTPS indicate?",
+      hi: "HTTPS क्या दर्शाता है?",
+      kn: "HTTPS ಎಂದರೆ ಏನು ಸೂಚಿಸುತ್ತದೆ?"
+    },
+    options: {
+      en: [
+        "Unsecured website",
+        "Secure and encrypted website",
+        "A website with ads",
+        "A social media site"
+      ],
+      hi: [
+        "असुरक्षित वेबसाइट",
+        "सुरक्षित और एन्क्रिप्टेड वेबसाइट",
+        "विज्ञापनों वाली वेबसाइट",
+        "एक सोशल मीडिया साइट"
+      ],
+      kn: [
+        "ಅಸುರಕ್ಷಿತ ವೆಬ್‌ಸೈಟ್",
+        "ಸುರಕ್ಷಿತ ಮತ್ತು ಎನ್‌ಕ್ರಿಪ್ಟ್ ಮಾಡಲಾದ ವೆಬ್‌ಸೈಟ್",
+        "ಜಾಹೀರಾತುಗಳಿರುವ ವೆಬ್‌ಸೈಟ್",
+        "ಒಂದು ಸಾಮಾಜಿಕ ಮಾಧ್ಯಮ ಸೈಟ್"
+      ]
+    },
+    correct: 1
+  },
+  {
+    question: {
+      en: "What is malware?",
+      hi: "मालवेयर क्या है?",
+      kn: "ಮಾಲ್ವೇರ್ ಎಂದರೆ ಏನು?"
+    },
+    options: {
+      en: [
+        "A software that harms your device",
+        "A useful app",
+        "A type of hardware",
+        "An internet browser"
+      ],
+      hi: [
+        "आपके डिवाइस को नुकसान पहुंचाने वाला सॉफ़्टवेयर",
+        "एक उपयोगी ऐप",
+        "एक प्रकार का हार्डवेयर",
+        "एक इंटरनेट ब्राउज़र"
+      ],
+      kn: [
+        "ನಿಮ್ಮ ಸಾಧನಕ್ಕೆ ಹಾನಿ ಮಾಡುವ ಸಾಫ್ಟ್‌ವೇರ್",
+        "ಒಂದು ಉಪಯುಕ್ತ ಅಪ್ಲಿಕೇಶನ್",
+        "ಒಂದು ಹಾರ್ಡ್‌ವೇರ್ ಪ್ರಕಾರ",
+        "ಒಂದು ಇಂಟರ್ನೆಟ್ ಬ್ರೌಸರ್"
+      ]
+    },
+    correct: 0
+  },
+  {
+    question: {
+      en: "Which of these is a strong password?",
+      hi: "इनमें से कौन सा मजबूत पासवर्ड है?",
+      kn: "ಈಗಳಲ್ಲಿ ಯಾವುದು ಬಲವಾದ ಪಾಸ್ವರ್ಡ್?"
+    },
+    options: {
+      en: [
+        "123456",
+        "password",
+        "P@ssw0rd123!",
+        "qwerty"
+      ],
+      hi: [
+        "123456",
+        "पासवर्ड",
+        "P@ssw0rd123!",
+        "क्वर्टी"
+      ],
+      kn: [
+        "123456",
+        "ಪಾಸ್ವರ್ಡ್",
+        "P@ssw0rd123!",
+        "ಕ್ವೆರ್‌ಟಿ"
+      ]
+    },
+    correct: 2
+  },
+  {
+    question: {
+      en: "What should you do if you receive a suspicious email?",
+      hi: "अगर आपको संदिग्ध ईमेल मिले तो आपको क्या करना चाहिए?",
+      kn: "ನೀವು ಸಂಶಯಾಸ್ಪದ ಇಮೇಲ್‌ನ್ನು ಪಡೆದರೆ ಏನು ಮಾಡಬೇಕು?"
+    },
+    options: {
+      en: [
+        "Click on all links",
+        "Delete it without opening",
+        "Reply to ask for details",
+        "Forward to friends"
+      ],
+      hi: [
+        "सभी लिंक पर क्लिक करें",
+        "खोले बिना हटा दें",
+        "विवरण पूछने के लिए जवाब दें",
+        "दोस्तों को भेजें"
+      ],
+      kn: [
+        "ಎಲ್ಲಾ ಲಿಂಕ್‌ಗಳನ್ನು ಕ್ಲಿಕ್ ಮಾಡಿ",
+        "ತೆರೆದೆ ಖಾಲಿ ಅಳಿಸಿ",
+        "ವಿವರ ಕೇಳಲು ಪ್ರತಿಕ್ರಿಯಿಸಿ",
+        "ಮಿತ್ರರಿಗೆ ಫಾರ್ವರ್ಡ್ ಮಾಡಿ"
+      ]
+    },
+    correct: 1
+  },
+  {
+    question: {
+      en: "What is two-factor authentication?",
+      hi: "टू-फैक्टर प्रमाणीकरण क्या है?",
+      kn: "ಎರಡು ಹಂತದ ಪ್ರಮಾಣೀಕರಣ ಎಂದರೆ ಏನು?"
+    },
+    options: {
+      en: [
+        "Login using only password",
+        "Login using password and another verification step",
+        "Logging in without password",
+        "Using fingerprint only"
+      ],
+      hi: [
+        "केवल पासवर्ड से लॉगिन करना",
+        "पासवर्ड और एक अन्य सत्यापन चरण से लॉगिन करना",
+        "पासवर्ड के बिना लॉगिन करना",
+        "केवल फिंगरप्रिंट का उपयोग"
+      ],
+      kn: [
+        "ಕೆವಲ ಪಾಸ್ವರ್ಡ್ ಬಳಸಿ ಲಾಗಿನ್",
+        "ಪಾಸ್ವರ್ಡ್ ಮತ್ತು ಮತ್ತೊಂದು ಪರಿಶೀಲನೆ ಹಂತ ಬಳಸಿ ಲಾಗಿನ್",
+        "ಪಾಸ್ವರ್ಡ್ ಇಲ್ಲದೆ ಲಾಗಿನ್",
+        "ಕೆವಲ ಬೆರಳು ಗುರುತು ಬಳಸುವುದು"
+      ]
+    },
+    correct: 1
+  },
+  {
+    question: {
+      en: "Which of these is NOT a sign of a scam website?",
+      hi: "इनमें से कौन सा स्कैम वेबसाइट का संकेत नहीं है?",
+      kn: "ಈಗಳಲ್ಲಿ ಯಾವುದು ವಂಚನಾ ವೆಬ್‌ಸೈಟ್ ಸೂಚಕವಲ್ಲ?"
+    },
+    options: {
+      en: [
+        "Secure HTTPS connection",
+        "Poor website design",
+        "Request for personal info",
+        "Unexpected pop-ups"
+      ],
+      hi: [
+        "सुरक्षित HTTPS कनेक्शन",
+        "खराब वेबसाइट डिज़ाइन",
+        "व्यक्तिगत जानकारी की मांग",
+        "अप्रत्याशित पॉप-अप"
+      ],
+      kn: [
+        "ಸುರಕ್ಷಿತ HTTPS ಸಂಪರ್ಕ",
+        "ಬೇಡಿಕೆಯಾದ ವೆಬ್‌ಸೈಟ್ ವಿನ್ಯಾಸ",
+        "ವೈಯಕ್ತಿಕ ಮಾಹಿತಿಗಾಗಿ ವಿನಂತಿ",
+        "ಅನಿರೀಕ್ಷಿತ ಪಾಪ್-ಅಪ್‌ಗಳು"
+      ]
+    },
+    correct: 0
+  },
+  {
+    question: {
+      en: "What does a firewall do?",
+      hi: "फायरवॉल क्या करता है?",
+      kn: "ಫೈರ್‌ವಾಲ್ ಏನು ಮಾಡುತ್ತದೆ?"
+    },
+    options: {
+      en: [
+        "Blocks unauthorized access",
+        "Deletes files automatically",
+        "Speeds up internet",
+        "Creates viruses"
+      ],
+      hi: [
+        "अनधिकृत पहुँच को रोकता है",
+        "स्वचालित रूप से फ़ाइलें हटाता है",
+        "इंटरनेट को तेज करता है",
+        "वायरस बनाता है"
+      ],
+      kn: [
+        "ಅನಧಿಕೃತ ಪ್ರವೇಶವನ್ನು ತಡೆಯುತ್ತದೆ",
+        "ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಕಡತಗಳನ್ನು ಅಳಿಸುತ್ತದೆ",
+        "ಇಂಟರ್ನೆಟ್ ವೇಗವನ್ನು ಹೆಚ್ಚಿಸುತ್ತದೆ",
+        "ವೈರಸ್‌ಗಳನ್ನು ಸೃಷ್ಟಿಸುತ್ತದೆ"
+      ]
+    },
+    correct: 0
+  },
+  {
+    question: {
+      en: "Why should you avoid using public Wi-Fi for sensitive activities?",
+      hi: "संवेदनशील गतिविधियों के लिए सार्वजनिक वाई-फाई का उपयोग क्यों नहीं करना चाहिए?",
+      kn: "ಸಂವೇದನಾಶೀಲ ಚಟುವಟಿಕೆಗಳಿಗೆ ಸಾರ್ವಜನಿಕ ವೈ-ಫೈ ಬಳಕೆ ಏಕೆ ತಪ್ಪಿಸಿಕೊಳ್ಳಬೇಕು?"
+    },
+    options: {
+      en: [
+        "It's free and slow",
+        "It may be insecure and prone to hacking",
+        "It uses too much battery",
+        "It causes phone damage"
+      ],
+      hi: [
+        "यह मुफ्त और धीमा है",
+        "यह असुरक्षित हो सकता है और हैकिंग के लिए खुला है",
+        "यह बहुत बैटरी उपयोग करता है",
+        "यह फोन को नुकसान पहुंचाता है"
+      ],
+      kn: [
+        "ಇದು ಉಚಿತ ಮತ್ತು ನಿಧಾನವಾಗಿದೆ",
+        "ಇದು ಅಸುರಕ್ಷಿತವಾಗಿರಬಹುದು ಮತ್ತು ಹ್ಯಾಕಿಂಗ್‌ಗೆ ಒಳಗಾಗಬಹುದು",
+        "ಇದು ಹೆಚ್ಚು ಬ್ಯಾಟರಿ ಬಳಕೆ ಮಾಡುತ್ತದೆ",
+        "ಇದು ಫೋನಿಗೆ ಹಾನಿ ಮಾಡುತ್ತದೆ"
+      ]
+    },
+    correct: 1
+  }
+]
+,
+    medium: [
+  {
+    question: {
+      en: "What is social engineering in cyber security?",
+      hi: "साइबर सुरक्षा में सोशल इंजीनियरिंग क्या है?",
+      kn: "ಸೈಬರ್ ಭದ್ರತೆಯಲ್ಲಿ ಸೋಶಿಯಲ್ ಎಂಜಿನಿಯರಿಂಗ್ ಎಂದರೆ ಏನು?"
+    },
+    options: {
+      en: [
+        "Manipulating people to give confidential info",
+        "Engineering social media apps",
+        "Designing computer hardware",
+        "Creating social websites"
+      ],
+      hi: [
+        "लोगों को गोपनीय जानकारी देने के लिए प्रभावित करना",
+        "सोशल मीडिया ऐप्स बनाना",
+        "कंप्यूटर हार्डवेयर डिजाइन करना",
+        "सोशल वेबसाइट बनाना"
+      ],
+      kn: [
+        "ಜನರನ್ನು ರಹಸ್ಯ ಮಾಹಿತಿಯನ್ನು ನೀಡಲು ಪ್ರಭಾವితం ಮಾಡುವುದು",
+        "ಸೋಶಿಯಲ್ ಮೀಡಿಯಾ ಅಪ್ಲಿಕೇಶನ್‌ಗಳನ್ನು ರಚಿಸುವುದು",
+        "ಕಂಪ್ಯೂಟರ್ ಹಾರ್ಡ್‌ವೇರ್ ವಿನ್ಯಾಸಗೊಳಿಸುವುದು",
+        "ಸಾಮಾಜಿಕ ವೆಬ್‌ಸೈಟ್‌ಗಳನ್ನು ಸೃಷ್ಟಿಸುವುದು"
+      ]
+    },
+    correct: 0
+  },
+  {
+    question: {
+      en: "What type of attack involves intercepting communication secretly?",
+      hi: "किस प्रकार का हमला संचार को गुप्त रूप से रोकता है?",
+      kn: "ಯಾವ ತരംದ ದಾಳಿಯಲ್ಲಿ ಸಂವಹನವನ್ನು ರಹಸ್ಯವಾಗಿ ಅಡಗಿಸಿಕೊಳ್ಳುತ್ತಾರೆ?"
+    },
+    options: {
+      en: [
+        "Phishing",
+        "Man-in-the-middle attack",
+        "Denial of service",
+        "Malware injection"
+      ],
+      hi: [
+        "फिशिंग",
+        "मैन-इन-द-मिडल हमला",
+        "सेवा इनकार",
+        "मालवेयर इंजेक्शन"
+      ],
+      kn: [
+        "ಫಿಷಿಂಗ್",
+        "ಮಾನ್-ಇನ್-ದಿ-ಮಿಡಲ್ ದಾಳಿ",
+        "ಸೇವೆ ನಿರಾಕರಣೆ",
+        "ಮಾಲ್ವೇರ್ ಇಂಜೆಕ್ಷನ್"
+      ]
+    },
+    correct: 1
+  },
+  {
+    question: {
+      en: "Which protocol secures email communication?",
+      hi: "कौन सा प्रोटोकॉल ईमेल संचार को सुरक्षित करता है?",
+      kn: "ಯಾವ ಪ್ರೋಟೋಕಾಲ್ ಇಮೇಲ್ ಸಂವಹನವನ್ನು ಸುರಕ್ಷಿತಗೊಳಿಸುತ್ತದೆ?"
+    },
+    options: {
+      en: [
+        "SMTP",
+        "IMAP",
+        "SSL/TLS",
+        "FTP"
+      ],
+      hi: [
+        "SMTP",
+        "IMAP",
+        "SSL/TLS",
+        "FTP"
+      ],
+      kn: [
+        "SMTP",
+        "IMAP",
+        "SSL/TLS",
+        "FTP"
+      ]
+    },
+    correct: 2
+  },
+  {
+    question: {
+      en: "What is a zero-day vulnerability?",
+      hi: "जीरो-डे कमजोरियां क्या होती हैं?",
+      kn: "ಶೂನ್ಯ-ದಿನ ದುರ್ಬಲತೆಗಳು ಏನು?"
+    },
+    options: {
+      en: [
+        "A security flaw unknown to vendor",
+        "A software update",
+        "A firewall type",
+        "An antivirus program"
+      ],
+      hi: [
+        "विक्रेता को अज्ञात सुरक्षा दोष",
+        "सॉफ़्टवेयर अपडेट",
+        "फायरवॉल प्रकार",
+        "एंटीवायरस प्रोग्राम"
+      ],
+      kn: [
+        "ಮಾರಾಟಗಾರನಿಗೆ ತಿಳಿಯದ ಭದ್ರತಾ ದೋಷ",
+        "ಸಾಫ್ಟ್‌ವೇರ್ ನವೀಕರಣ",
+        "ಫೈರ್‌ವಾಲ್ ಪ್ರಕಾರ",
+        "ವೈರಸ್ ರಕ್ಷಕ ಪ್ರೋಗ್ರಾಮ್"
+      ]
+    },
+    correct: 0
+  },
+  {
+    question: {
+      en: "What is ransomware?",
+      hi: "रैनसमवेयर क्या है?",
+      kn: "ರ್ಯಾನ್ಸಮ್‌ವೇರ್ ಎಂದರೆ ಏನು?"
+    },
+    options: {
+      en: [
+        "Malware that demands ransom for data access",
+        "A software update tool",
+        "An email spam filter",
+        "A password manager"
+      ],
+      hi: [
+        "डेटा एक्सेस के लिए फिरौती मांगने वाला मैलवेयर",
+        "सॉफ़्टवेयर अपडेट टूल",
+        "ईमेल स्पैम फ़िल्टर",
+        "पासवर्ड मैनेजर"
+      ],
+      kn: [
+        "ಡೇಟಾ ಪ್ರವೇಶಕ್ಕಾಗಿ ಭೂತಕಾಲಿಕದ ಹಣ ಕೇಳುವ ಮಾಲ್ವೇರ್",
+        "ಸಾಫ್ಟ್‌ವೇರ್ ನವೀಕರಣ ಸಾಧನ",
+        "ಇಮೇಲ್ ಸ್ಪ್ಯಾಮ್ ಫಿಲ್ಟರ್",
+        "ಪಾಸ್ವರ್ಡ್ ಮ್ಯಾನೇಜರ್"
+      ]
+    },
+    correct: 0
+  },
+  {
+    question: {
+      en: "What does VPN stand for and do?",
+      hi: "VPN का पूरा नाम और काम क्या है?",
+      kn: "VPN ಎಂದರೇನು ಮತ್ತು ಅದು ಏನು ಮಾಡುತ್ತದೆ?"
+    },
+    options: {
+      en: [
+        "Virtual Private Network; encrypts internet traffic",
+        "Variable Public Network; speeds internet",
+        "Virtual Public Network; blocks ads",
+        "Verified Private Network; shares files"
+      ],
+      hi: [
+        "वर्चुअल प्राइवेट नेटवर्क; इंटरनेट ट्रैफ़िक को एन्क्रिप्ट करता है",
+        "वेरिएबल पब्लिक नेटवर्क; इंटरनेट तेज करता है",
+        "वर्चुअल पब्लिक नेटवर्क; विज्ञापन ब्लॉक करता है",
+        "वेरिफाइड प्राइवेट नेटवर्क; फ़ाइलें साझा करता है"
+      ],
+      kn: [
+        "ವರ್ಚುಯಲ್ ಪ್ರೈವೇಟ್ ನೆಟ್‌ವರ್ಕ್; ಇಂಟರ್ನೆಟ್ ಟ್ರಾಫಿಕ್ ಅನ್ನು ಎನ್‌ಕ್ರಿಪ್ಟ್ ಮಾಡುತ್ತದೆ",
+        "ವೇರಿಯಬಲ್ ಪಬ್ಲಿಕ್ ನೆಟ್‌ವರ್ಕ್; ಇಂಟರ್ನೆಟ್ ವೇಗವನ್ನು ಹೆಚ್ಚಿಸುತ್ತದೆ",
+        "ವರ್ಚುಯಲ್ ಪಬ್ಲಿಕ್ ನೆಟ್‌ವರ್ಕ್; ಜಾಹೀರಾತುಗಳನ್ನು ತಡೆಹಿಡಿಯುತ್ತದೆ",
+        "ವೆರಿಫೈಡ್ ಪ್ರೈವೇಟ್ ನೆಟ್‌ವರ್ಕ್; ಫೈಲ್‌ಗಳನ್ನು ಹಂಚಿಕೊಳ್ಳುತ್ತದೆ"
+      ]
+    },
+    correct: 0
+  },
+  {
+    question: {
+      en: "Which method protects against brute force password attacks?",
+      hi: "ब्रूट फोर्स पासवर्ड अटैक्स से बचाव का तरीका कौन सा है?",
+      kn: "ಬ್ರೂಟ್ ಫೋರ್ಸ್ ಪಾಸ್ವರ್ಡ್ ದಾಳಿಯಿಂದ ರಕ್ಷಿಸುವ ವಿಧಾನ ಯಾವುದು?"
+    },
+    options: {
+      en: [
+        "Using CAPTCHAs and account lockout",
+        "Using easy passwords",
+        "Sharing passwords",
+        "Ignoring login attempts"
+      ],
+      hi: [
+        "CAPTCHA और खाता लॉकआउट का उपयोग",
+        "आसान पासवर्ड का उपयोग",
+        "पासवर्ड साझा करना",
+        "लॉगिन प्रयासों की अनदेखी"
+      ],
+      kn: [
+        "CAPTCHA ಮತ್ತು ಖಾತೆ ಲಾಕ್‌ಔಟ್ ಬಳಸು",
+        "ಸರಳ ಪಾಸ್ವರ್ಡ್ ಬಳಸು",
+        "ಪಾಸ್ವರ್ಡ್ ಹಂಚಿಕೊಳ್ಳು",
+        "ಲಾಗಿನ್ ಪ್ರಯತ್ನಗಳನ್ನು ನಿರ್ಲಕ್ಷಿಸು"
+      ]
+    },
+    correct: 0
+  },
+  {
+    question: {
+      en: "What is spear phishing?",
+      hi: "स्पीयर फिशिंग क्या है?",
+      kn: "ಸ್ಪಿಯರ್ ಫಿಷಿಂಗ್ ಎಂದರೆ ಏನು?"
+    },
+    options: {
+      en: [
+        "Targeted phishing attack on a specific person",
+        "Fishing with a spear",
+        "A type of antivirus software",
+        "Spam email campaign"
+      ],
+      hi: [
+        "एक विशेष व्यक्ति पर लक्षित फिशिंग हमला",
+        "भाला से मछली पकड़ना",
+        "एक प्रकार का एंटीवायरस सॉफ़्टवेयर",
+        "स्पैम ईमेल अभियान"
+      ],
+      kn: [
+        "ನಿರ್ದಿಷ್ಟ ವ್ಯಕ್ತಿಯನ್ನು ಗುರಿಯಾಗಿಸುವ ಫಿಷಿಂಗ್ ದಾಳಿ",
+        "ಬಲುವಿನಿಂದ ಮೀನು ಹಿಡಿಯುವುದು",
+        "ಒಂದು ತರಹದ ವೈರಸ್ ರಕ್ಷಕ ಸಾಫ್ಟ್‌ವೇರ್",
+        "ಸ್ಪ್ಯಾಮ್ ಇಮೇಲ್ ಅಭಿಯಾನ"
+      ]
+    },
+    correct: 0
+  },
+  {
+    question: {
+      en: "Which of the following is a strong encryption algorithm?",
+      hi: "निम्नलिखित में से कौन सा एक मजबूत एन्क्रिप्शन एल्गोरिदम है?",
+      kn: "ಕೆಳಗಿನವುಗಳಲ್ಲಿ ಯಾವುದು ಬಲವಾದ ಎನ್‌ಕ್ರಿಪ್ಷನ್ ಅಲ್ಗಾರಿದಮ್?"
+    },
+    options: {
+      en: [
+        "AES",
+        "HTTP",
+        "FTP",
+        "HTML"
+      ],
+      hi: [
+        "AES",
+        "HTTP",
+        "FTP",
+        "HTML"
+      ],
+      kn: [
+        "AES",
+        "HTTP",
+        "FTP",
+        "HTML"
+      ]
+    },
+    correct: 0
+  }
+]
+,
+    hard: [
+      // add 10 hard questions similarly
+    ]
+  };
+
+  let userAnswers = [];
+  let currentQuestionIndex = 0;
+  let timerInterval;
+  let timerSeconds;
+
+  function openAdminModal() {
+    document.getElementById('adminModal').classList.remove('hidden');
+  }
+
+  function closeAdminModal() {
+    document.getElementById('adminModal').classList.add('hidden');
+  }
+
+  function unlockAdmin() {
+    const code = document.getElementById('adminCode').value.trim();
+    if (code === "admin123") {
+      document.getElementById('adminControls').classList.remove('hidden');
+      adminUnlocked = true;
+      alert("✅ Admin settings unlocked.");
+    } else {
+      alert("❌ Incorrect code.");
+    }
+    document.getElementById('adminCode').value = '';
+  }
+
+  function applyAdminSettings() {
+    if (!adminUnlocked) return;
+    const disable = document.getElementById('disableUserSelection').checked;
+    const diff = document.getElementById('adminDifficulty').value;
+    const time = parseInt(document.getElementById('customTime').value);
+    adminForceDifficulty = diff;
+    disableUserOptions = disable;
+    adminTimeOverride = time > 0 ? time : null;
+
+    if (disable) {
+      document.getElementById('difficultySelect').value = diff;
+      document.getElementById('difficultySelect').disabled = true;
+    } else {
+      document.getElementById('difficultySelect').disabled = false;
+    }
+    alert("✅ Settings applied.");
+    closeAdminModal();
+  }
+
+  function startQuiz() {
+    userName = document.getElementById("userNameInput").value.trim();
+if (!userName) {
+  alert("Please enter your name before starting the quiz.");
+  return;
+}
+
+    language = document.getElementById('languageSelect').value;
+    difficulty = disableUserOptions ? adminForceDifficulty : document.getElementById('difficultySelect').value;
+
+    // Timer settings
+    if (difficulty === "easy") timerSeconds = 60;
+    else if (difficulty === "medium") timerSeconds = 90;
+    else if (difficulty === "hard") timerSeconds = 120;
+
+    if (adminTimeOverride) timerSeconds = adminTimeOverride;
+
+    userAnswers = new Array(questionsDB[difficulty].length).fill(null);
+    currentQuestionIndex = 0;
+
+    document.getElementById('startContainer').classList.add('hidden');
+    document.getElementById('quizContainer').classList.remove('hidden');
+    document.getElementById('quizTitle').textContent = `Difficulty: ${difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}`;
+
+    displayQuestion();
+    startTimer();
+    updateNavigationButtons();
+  }
+
+  function displayQuestion() {
+    const questionData = questionsDB[difficulty][currentQuestionIndex];
+    if (!questionData) {
+      document.getElementById('questionContainer').innerHTML = "<p>No questions available.</p>";
+      return;
+    }
+    const qText = questionData.question[language] || questionData.question['en'];
+    const options = questionData.options[language] || questionData.options['en'];
+
+    let html = `<div class="mb-4 font-semibold text-lg">Q${currentQuestionIndex + 1}: ${qText}</div><div class="space-y-2">`;
+    options.forEach((opt, i) => {
+      const selectedClass = (userAnswers[currentQuestionIndex] === i) ? "selected" : "";
+      html += `<div class="answer-option p-2 border rounded cursor-pointer ${selectedClass}" onclick="selectAnswer(${i})">${opt}</div>`;
+    });
+    html += "</div>";
+    document.getElementById('questionContainer').innerHTML = html;
+  }
+
+  function selectAnswer(optionIndex) {
+    userAnswers[currentQuestionIndex] = optionIndex;
+    displayQuestion();
+  }
+
+  function nextQuestion() {
+    if (currentQuestionIndex < questionsDB[difficulty].length - 1) {
+      currentQuestionIndex++;
+      displayQuestion();
+      updateNavigationButtons();
+    }
+  }
+
+  function prevQuestion() {
+    if (currentQuestionIndex > 0) {
+      currentQuestionIndex--;
+      displayQuestion();
+      updateNavigationButtons();
+    }
+  }
+
+  function updateNavigationButtons() {
+    document.getElementById('prevBtn').disabled = currentQuestionIndex === 0;
+    document.getElementById('nextBtn').disabled = currentQuestionIndex === questionsDB[difficulty].length - 1;
+  }
+
+  function startTimer() {
+    clearInterval(timerInterval);
+    let timeLeft = timerSeconds;
+    updateTimerDisplay(timeLeft);
+    timerInterval = setInterval(() => {
+      timeLeft--;
+      updateTimerDisplay(timeLeft);
+      if (timeLeft <= 0) {
+        clearInterval(timerInterval);
+        alert("⏰ Time is up! Submitting your quiz.");
+        submitQuiz();
+      }
+    }, 1000);
+  }
+
+  function updateTimerDisplay(seconds) {
+    const min = Math.floor(seconds / 60).toString().padStart(2, '0');
+    const sec = (seconds % 60).toString().padStart(2, '0');
+    document.getElementById('timer').textContent = `${min}:${sec}`;
+  }
+
+  function submitQuiz() {
+    clearInterval(timerInterval);
+    const total = questionsDB[difficulty].length;
+    let correctCount = 0;
+    const detailedHTML = [];
+
+    questionsDB[difficulty].forEach((q, i) => {
+      const userA = userAnswers[i];
+      const correctA = q.correct;
+      const questionText = q.question[language] || q.question['en'];
+      const options = q.options[language] || q.options['en'];
+
+      let answerClass = "";
+      if (userA === correctA) {
+        correctCount++;
+        answerClass = "correct";
+      } else if (userA !== null) {
+        answerClass = "incorrect";
+      }
+
+      detailedHTML.push(`
+        <div class="border rounded p-3">
+          <div class="font-semibold">Q${i+1}: ${questionText}</div>
+          <div class="mt-1 space-y-1">
+            ${options.map((opt, idx) => {
+              let cls = "";
+              if (idx === correctA) cls = "text-green-700 font-bold";
+              if (idx === userA && idx !== correctA) cls = "text-red-700 line-through";
+              return `<div class="${cls}">${opt}</div>`;
+            }).join('')}
+          </div>
+          <div class="mt-1 text-sm">Your answer: ${userA === null ? "No answer" : options[userA]}</div>
+        </div>
+      `);
+    });
+
+   // Save participant data
+const participant = {
+  name: userName,
+ // Change this if you want user to enter name
+  score: correctCount,
+  difficulty: difficulty,
+  language: language,
+  timeTaken: `${timerSeconds} sec`,
+  time: new Date().toLocaleString()
+};
+
+let participants = JSON.parse(localStorage.getItem("quizParticipants")) || [];
+participants.push(participant);
+localStorage.setItem("quizParticipants", JSON.stringify(participants));
+
+// Now show result
+document.getElementById('resultSummary').innerHTML = `
+  <p>Total Questions: ${total}</p>
+  <p>Correct Answers: ${correctCount}</p>
+  <p>Score: ${Math.round((correctCount / total) * 100)}%</p>
+`;
+
+    document.getElementById('detailedResults').innerHTML = detailedHTML.join('');
+    document.getElementById('quizContainer').classList.add('hidden');
+    document.getElementById('resultPopup').classList.remove('hidden');
+  }
+
+  function closeResults() {
+    document.getElementById('resultPopup').classList.add('hidden');
+    document.getElementById('startContainer').classList.remove('hidden');
+  }
+
+  // Back button action - you can customize this
+  function goBack() {
+  window.location.href = "index.html";
+}
+window.onload = function () {
+  loadAdminSettingsFromStorage();
+};
+
+
+</script>
+</body>
+</html>

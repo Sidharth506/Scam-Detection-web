@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Scam Detector</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans min-h-screen flex items-center justify-center px-4"
+      style="background-image: url('back.jpg'); background-size: cover; background-position: center;">
+  <div class="bg-white bg-opacity-95 shadow-2xl rounded-2xl p-8 max-w-xl w-full">
+    <h1 class="text-3xl font-bold text-center text-red-600 mb-6">Scam Detector</h1>
+    <input type="text" id="userInput" placeholder="Enter URL, email, or app name"
+           class="w-full px-4 py-3 border rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-red-400" />
+   
+           <button onclick="checkInput()" class="w-full bg-red-500 text-white py-3 rounded-lg hover:bg-red-600 transition">
+      Check for Scam
+    </button>
+    <div class="mt-4 text-center">
+  <a href="index.html" class="inline-block bg-gray-800 hover:bg-gray-900 text-white px-6 py-2 rounded-full shadow transition duration-200">
+    ⬅️ Back
+  </a>
+</div>
+
+    <div id="result" class="mt-6 text-center text-lg font-medium"></div>
+    <div class="mt-6 flex justify-between text-sm">
+      <a href="feedback.html" class="text-blue-600 hover:underline">Feedback / Report</a>
+      <a href="quiz.html" class="text-green-600 hover:underline">Awareness Quiz</a>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
