@@ -690,8 +690,273 @@ function loadAdminSettingsFromStorage() {
 ]
 ,
     hard: [
-      // add 10 hard questions similarly
-    ]
+  {
+    question: {
+      en: "A scammer asks for remote access to your computer claiming to fix a virus. What should you do?",
+      hi: "एक स्कैमर वायरस को ठीक करने के नाम पर आपके कंप्यूटर का रिमोट एक्सेस मांगता है। आपको क्या करना चाहिए?",
+      kn: "ಸ್ಕ್ಯಾಮರ್ ವೈರಸ್ ಸರಿಪಡಿಸುತ್ತೇವೆಂದು ನಿಮ್ಮ ಕಂಪ್ಯೂಟರ್‌ಗೆ ರಿಮೋಟ್ ಪ್ರವೇಶವನ್ನು ಕೇಳುತ್ತಾರೆ. ನೀವು ಏನು ಮಾಡಬೇಕು?"
+    },
+    options: {
+      en: [
+        "Give access immediately",
+        "Install the software they suggest",
+        "Hang up and report",
+        "Share OTP for verification"
+      ],
+      hi: [
+        "तुरंत एक्सेस दें",
+        "उनके बताए सॉफ़्टवेयर को इंस्टॉल करें",
+        "फोन काटें और रिपोर्ट करें",
+        "सत्यापन के लिए ओटीपी साझा करें"
+      ],
+      kn: [
+        "ತಕ್ಷಣ ಪ್ರವೇಶ ನೀಡಿ",
+        "ಅವರು ಸೂಚಿಸಿದ ಸಾಫ್ಟ್‌ವೇರ್ ಸ್ಥಾಪಿಸಿ",
+        "ಕೋಲ್ ಕಡಿದು ವರದಿ ಮಾಡಿ",
+        "ಪರಿಶೀಲನೆಗಾಗಿ OTP ಹಂಚಿಕೊಳ್ಳಿ"
+      ]
+    },
+    answer: 2
+  },
+  {
+    question: {
+      en: "Which is a red flag that an investment opportunity is likely a scam?",
+      hi: "कौन-सा संकेत यह दर्शाता है कि निवेश का अवसर एक घोटाला हो सकता है?",
+      kn: "ಹೂಡಿಕೆ ಅವಕಾಶವು ಸ್ಕ್ಯಾಮ್ ಆಗಿರುವ ಸೂಚನೆ ಯಾವುದು?"
+    },
+    options: {
+      en: [
+        "Guaranteed high returns",
+        "Regulated by SEBI",
+        "Provided with documents",
+        "Long-term commitment required"
+      ],
+      hi: [
+        "उच्च रिटर्न की गारंटी",
+        "SEBI द्वारा विनियमित",
+        "दस्तावेज़ प्रदान किए गए हैं",
+        "दीर्घकालिक प्रतिबद्धता आवश्यक"
+      ],
+      kn: [
+        "ಹೆಚ್ಚು ಲಾಭದ ಭರವಸೆ",
+        "SEBI ನಿಯಂತ್ರಿತ",
+        "ಡಾಕ್ಯುಮೆಂಟ್‌ಗಳನ್ನು ನೀಡಲಾಗಿದೆ",
+        "ದೀರ್ಘಕಾಲ ಬದ್ಧತೆ ಅಗತ್ಯವಿದೆ"
+      ]
+    },
+    answer: 0
+  },
+  {
+    question: {
+      en: "You receive an email saying your bank account will be blocked unless you verify details. What is this?",
+      hi: "आपको एक ईमेल मिलता है जिसमें कहा गया है कि विवरण सत्यापित नहीं करने पर आपका बैंक खाता बंद कर दिया जाएगा। यह क्या है?",
+      kn: "ನಿಮ್ಮ ಬ್ಯಾಂಕ್ ಖಾತೆ ನಿರ್ಬಂಧಿಸಲಾಗುತ್ತದೆ ಎಂಬ ಇಮೇಲ್ ನಿಮಗೆ ಬರುತ್ತದೆ. ಇದು ಏನು?"
+    },
+    options: {
+      en: [
+        "Routine verification",
+        "Phishing scam",
+        "Bank security process",
+        "Genuine alert"
+      ],
+      hi: [
+        "नियमित सत्यापन",
+        "फ़िशिंग घोटाला",
+        "बैंक सुरक्षा प्रक्रिया",
+        "वास्तविक चेतावनी"
+      ],
+      kn: [
+        "ಸಾಮಾನ್ಯ ಪರಿಶೀಲನೆ",
+        "ಫಿಷಿಂಗ್ ಸ್ಕ್ಯಾಮ್",
+        "ಬ್ಯಾಂಕ್ ಭದ್ರತಾ ಪ್ರಕ್ರಿಯೆ",
+        "ನಿಜವಾದ ಎಚ್ಚರಿಕೆ"
+      ]
+    },
+    answer: 1
+  },
+  {
+    question: {
+      en: "Scammers often ask for which of the following to access your bank account?",
+      hi: "स्कैमर अक्सर आपके बैंक खाते तक पहुंचने के लिए इनमें से क्या मांगते हैं?",
+      kn: "ಸ್ಕ್ಯಾಮರ್‌ಗಳು ಬ್ಯಾಂಕ್ ಖಾತೆಗೆ ಪ್ರವೇಶ ಪಡೆಯಲು ಯಾವದನ್ನು ಕೇಳುತ್ತಾರೆ?"
+    },
+    options: {
+      en: ["PAN number", "Aadhar number", "OTP", "Mobile number"],
+      hi: ["पैन नंबर", "आधार नंबर", "ओटीपी", "मोबाइल नंबर"],
+      kn: ["ಪ್ಯಾನ್ ನಂಬರ", "ಆಧಾರ್ ನಂಬರ", "OTP", "ಮೊಬೈಲ್ ನಂಬರ"]
+    },
+    answer: 2
+  },
+  {
+    question: {
+      en: "Which is the safest way to verify a suspicious link?",
+      hi: "संदिग्ध लिंक को सत्यापित करने का सबसे सुरक्षित तरीका क्या है?",
+      kn: "ಅನುಮಾನಾಸ್ಪದ ಲಿಂಕ್ ಅನ್ನು ಪರಿಶೀಲಿಸಲು ಸುರಕ್ಷಿತ ಮಾರ್ಗ ಯಾವುದು?"
+    },
+    options: {
+      en: [
+        "Click and see what opens",
+        "Forward to friends",
+        "Use a link scanner tool",
+        "Ignore completely"
+      ],
+      hi: [
+        "क्लिक करें और देखें क्या खुलता है",
+        "दोस्तों को भेजें",
+        "लिंक स्कैनर टूल का उपयोग करें",
+        "पूरी तरह अनदेखा करें"
+      ],
+      kn: [
+        "ಕ್ಲಿಕ್ ಮಾಡಿ ಏನು ತೆರೆದುಕೊಳ್ಳುತ್ತದೆಯೆಂದು ನೋಡಿ",
+        "ಸ್ನೇಹಿತರಿಗೆ ಕಳುಹಿಸಿ",
+        "ಲಿಂಕ್ ಸ್ಕ್ಯಾನರ್ ಬಳಸಿ",
+        "ಪೂರ್ಣವಾಗಿ ನಿರ್ಲಕ್ಷಿಸಿ"
+      ]
+    },
+    answer: 2
+  },
+  {
+    question: {
+      en: "What is the official Indian portal to report cybercrime?",
+      hi: "साइबर अपराध की रिपोर्ट करने के लिए भारत का आधिकारिक पोर्टल कौन सा है?",
+      kn: "ಸೈಬರ್ ಅಪರಾಧವನ್ನು ವರದಿ ಮಾಡಲು ಅಧಿಕೃತ ಭಾರತೀಯ ಪೋರ್ಟಲ್ ಯಾವುದು?"
+    },
+    options: {
+      en: [
+        "cybercrime.gov.in",
+        "cybersafe.in",
+        "indiacyber.gov",
+        "rbi.org/cyber"
+      ],
+      hi: [
+        "cybercrime.gov.in",
+        "cybersafe.in",
+        "indiacyber.gov",
+        "rbi.org/cyber"
+      ],
+      kn: [
+        "cybercrime.gov.in",
+        "cybersafe.in",
+        "indiacyber.gov",
+        "rbi.org/cyber"
+      ]
+    },
+    answer: 0
+  },
+  {
+    question: {
+      en: "A fake shopping site asks for payment before delivery. What type of scam is this?",
+      hi: "एक नकली शॉपिंग साइट डिलीवरी से पहले भुगतान मांगती है। यह किस प्रकार का घोटाला है?",
+      kn: "ನಕಲಿ ಶಾಪಿಂಗ್ ವೆಬ್‌ಸೈಟ್ ವಿತರಣೆಗೆ ಮುನ್ನ ಪಾವತಿ ಕೇಳುತ್ತದೆ. ಇದು ಯಾವ ಸ್ಕ್ಯಾಮ್?"
+    },
+    options: {
+      en: [
+        "Pre-delivery scam",
+        "Advance payment fraud",
+        "Carding scam",
+        "Clickbait trap"
+      ],
+      hi: [
+        "पूर्व-वितरण घोटाला",
+        "अग्रिम भुगतान धोखाधड़ी",
+        "कार्डिंग घोटाला",
+        "क्लिकबेट जाल"
+      ],
+      kn: [
+        "ವಿತರಣೆಯ ಮುನ್ನ ಸ್ಕ್ಯಾಮ್",
+        "ಮುಂಗಡ ಪಾವತಿ ಮೋಸ",
+        "ಕಾರ್ಡಿಂಗ್ ಸ್ಕ್ಯಾಮ್",
+        "ಕ್ಲಿಕ್‌ಬೇಟ್ ಉಬ್ಬು"
+      ]
+    },
+    answer: 1
+  },
+  {
+    question: {
+      en: "Which one is most secure for online banking?",
+      hi: "ऑनलाइन बैंकिंग के लिए सबसे सुरक्षित विकल्प कौन सा है?",
+      kn: "ಆನ್‌ಲೈನ್ ಬ್ಯಾಂಕಿಂಗ್‌ಗೆ ಅತ್ಯಂತ ಸುರಕ್ಷಿತ ಆಯ್ಕೆ ಯಾವುದು?"
+    },
+    options: {
+      en: [
+        "Public Wi-Fi with VPN",
+        "Private network with antivirus",
+        "Any open network",
+        "Shared office Wi-Fi"
+      ],
+      hi: [
+        "VPN के साथ सार्वजनिक वाई-फाई",
+        "एंटीवायरस के साथ निजी नेटवर्क",
+        "कोई भी ओपन नेटवर्क",
+        "साझा कार्यालय वाई-फाई"
+      ],
+      kn: [
+        "VPN ನೊಂದಿಗೆ ಸಾರ್ವಜನಿಕ ವೈ-ಫೈ",
+        "ಎಂಟಿವೈರಸ್ ಇರುವ ಖಾಸಗಿ ನೆಟ್‌ವರ್ಕ್",
+        "ಯಾವುದೇ ಓಪನ್ ನೆಟ್‌ವರ್ಕ್",
+        "ಹಂಚಿಕೊಂಡ ಆಫೀಸ್ ವೈ-ಫೈ"
+      ]
+    },
+    answer: 1
+  },
+  {
+    question: {
+      en: "How can you detect a fake government website?",
+      hi: "आप नकली सरकारी वेबसाइट की पहचान कैसे कर सकते हैं?",
+      kn: "ನಕಲಿ ಸರಕಾರಿ ವೆಬ್‌ಸೈಟ್ ಅನ್ನು ಹೇಗೆ ಗುರುತಿಸಬಹುದು?"
+    },
+    options: {
+      en: [
+        "Check for .gov.in domain",
+        "Check for .com domain",
+        "Just trust the logo",
+        "Check social media followers"
+      ],
+      hi: [
+        ".gov.in डोमेन जांचें",
+        ".com डोमेन देखें",
+        "सिर्फ लोगो पर भरोसा करें",
+        "सोशल मीडिया फॉलोअर्स देखें"
+      ],
+      kn: [
+        ".gov.in ಡೊಮೇನ್ ಪರಿಶೀಲಿಸಿ",
+        ".com ಡೊಮೇನ್ ನೋಡಿ",
+        "ಲೋಗೋವನ್ನು ನಂಬಿ",
+        "ಸೋಶಿಯಲ್ ಮೀಡಿಯಾ ಅನುಯಾಯಿಗಳನ್ನು ನೋಡಿ"
+      ]
+    },
+    answer: 0
+  },
+  {
+    question: {
+      en: "Which one is an example of a ransomware attack?",
+      hi: "रैंसमवेयर हमले का एक उदाहरण कौन सा है?",
+      kn: "ರೆನ್ಸಮ್‌ವೇರ್ ದಾಳಿ ಉದಾಹರಣೆಯಾದ್ದೇನು?"
+    },
+    options: {
+      en: [
+        "Files get encrypted and payment is demanded",
+        "User's email gets spammed",
+        "Mobile gets locked temporarily",
+        "Account is deactivated due to inactivity"
+      ],
+      hi: [
+        "फ़ाइलें एन्क्रिप्ट हो जाती हैं और भुगतान मांगा जाता है",
+        "उपयोगकर्ता का ईमेल स्पैम हो जाता है",
+        "मोबाइल अस्थायी रूप से लॉक हो जाता है",
+        "निष्क्रियता के कारण खाता बंद कर दिया जाता है"
+      ],
+      kn: [
+        "ಫೈಲ್‌ಗಳು ಎನ್‌ಕ್ರಿಪ್ಟ್ ಆಗುತ್ತವೆ ಮತ್ತು ಹಣ ಕೇಳಲಾಗುತ್ತದೆ",
+        "ಬಳಕೆದಾರನ ಇಮೇಲ್ ಸ್ಪ್ಯಾಮ್ ಆಗುತ್ತದೆ",
+        "ಮೊಬೈಲ್ ತಾತ್ಕಾಲಿಕವಾಗಿ ಲಾಕ್ ಆಗುತ್ತದೆ",
+        "ಅಕ್ರಿಯತೆಯಿಂದ ಖಾತೆ ನಿಷ್ಕ್ರಿಯಗೊಳ್ಳುತ್ತದೆ"
+      ]
+    },
+    answer: 0
+  }
+]
+
   };
 
   let userAnswers = [];
